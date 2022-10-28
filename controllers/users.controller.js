@@ -3,20 +3,50 @@ const { response } = require('express');
 const User = require('../models/user');
 const bcryptjs = require('bcryptjs');
 
-const getUser = (req, res = response) => {
-    const params = req.query;
+const getUser = async (req, res = response) => {
+    // Preparando la paginacion
+    // ejemplo de url: http://localhost:8080/api/users?limit=5&from=0
+    const {limit = 5, from = 0} = req.query;
+    // Parse de string a int
+    const limitParse = Number(limit);
+    const fromParse = Number(from);
+    // Validacion para evitar no pasar un NaN
+    const fromValidation = typeof fromParse === 'number' ? fromParse : 0;
+    const limitValidation = typeof limitParse === 'number' ? limitParse : 5;
+
+    /* const users = await User.find({ state: true })
+    .skip(fromValidation)
+    .limit(limitValidation);
+
+    const total = await User.countDocuments({ state: true }); */
+
+    // Para poder hacer las dos peticiones al mismo tiempo se usa el Promise.all
+    // Entonces evitas que la linea 14 se ejecute y la 15 recien cuando termine de ejecutarse la 14
+
+    const [total, users] = await Promise.all([
+        User.countDocuments({ state: true }),
+        User.find({ state: true })
+            .skip(fromValidation)
+            .limit(limitValidation)
+
+    ]);
 
     res.json({
-        msg: 'Funcando desde controlador user!',
-        queryParams: params
+        msg: 'trayendo todos los usuarios',
+        users,
+        total
     });
 };
 
-const deleteUser = (req, res = response) => {
+const deleteUser = async (req, res = response) => {
     const {id} = req.params;
+    // Borrado fisico
+    // const user = await User.findByIdAndDelete(id);
+    const user = await User.findByIdAndUpdate(id, {state: false});
+
     res.json({
-        msg: 'Delete desde controlador!',
-        deleted_id_item: id
+        msg: 'User deleted correctly',
+        user,
     });
 };
 const putUser = async (req, res = response) => {
@@ -32,10 +62,7 @@ const putUser = async (req, res = response) => {
     //Para evitar que me manden datos que no se deben actualizar
     const user = await User.findByIdAndUpdate(id, rest);
 
-    res.json({
-        msg: 'Put desde controlador!',
-        user,
-    });
+    res.json({user});
 };
 const createUser = async (req, res = response) => {
 

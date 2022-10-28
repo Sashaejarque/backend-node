@@ -7,7 +7,12 @@ const { isValidRole, emailExists, isUserExistsByID } = require('../helpers/db-va
 const router = Router();
 
 router.get('/', getUser);
-router.delete('/:id', deleteUser);
+router.delete('/:id', [
+    check('id', 'The id is not valid').isMongoId(),
+    check('id').custom(isUserExistsByID),
+    errorValidation
+],deleteUser);
+
 router.put('/:id',[
     // Validando que sea un id mongo valido
     check('id', 'Is not a valid ID').isMongoId(),
