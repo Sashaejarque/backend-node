@@ -40,13 +40,19 @@ const getUser = async (req, res = response) => {
 
 const deleteUser = async (req, res = response) => {
     const {id} = req.params;
+
     // Borrado fisico
     // const user = await User.findByIdAndDelete(id);
     const user = await User.findByIdAndUpdate(id, {state: false});
+    
+    // Obtener el usuario loggeado desde la req
+    /* const authenticatedUser = req.user; */
 
     res.json({
         msg: 'User deleted correctly',
         user,
+        /* authenticatedUser */
+        
     });
 };
 const putUser = async (req, res = response) => {
