@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google sign-in</title>
+  </head>
+  <body>
+    <h1>Google sign in</h1>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <div id="g_id_onload"
+       data-client_id="562119247689-qqa1qt1j52i32kubjhl03emaj29c68b9.apps.googleusercontent.com"
+       data-auto_prompt="false"
+       data-callback="handleCredentialResponse"
+       >
+    </div>
+    <div class="g_id_signin"
+       data-type="standard"
+       data-size="large"
+       data-theme="outline"
+       data-text="sign_in_with"
+       data-shape="rectangular"
+       data-logo_alignment="left">
+    </div>
+    <button id="google_signout">Sign out</button>
+    <script>
+        function handleCredentialResponse(response) {
+            // Google id token 
+          /* console.log(response.credential); */
+          fetch('http://localhost:8080/api/auth/google', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              id_token: response.credential
+            })
+          }).then(res => res.json())
+            .then(resp => {
+              console.log(resp);
+              localStorage.setItem('email', resp.user.email);
+            }).catch(err => {
+              console.log(err);
+            });
+        }
+
+        const button = document.getElementById('google_signout');
+        // sign out 
+        button.onclick = () => {
+          console.log(google.accounts.id);
+          google.accounts.id.disableAutoSelect();
+
+          google.accounts.id.revoke(localStorage.getItem('email'), () => {
+            localStorage.clear();
+            location.reload();
+          });
+        };
+
+      </script>
+  </body>
+</html>
