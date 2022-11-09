@@ -52,6 +52,7 @@ const googleSignIn = async (req, res = response) => {
     try {
         const { name, picture, email } = await googleVerify(id_token);
         let user = await User.findOne({ email });
+        console.log(user);
         // Viendo si el usuario existe en la base de datos
         if (!user) {
             const data = {
