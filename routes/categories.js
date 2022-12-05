@@ -1,16 +1,17 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { validateJWT } = require('../middlewares');
+const { createCategory } = require('../controllers/category.controller');
+const { validateJWT, errorValidation } = require('../middlewares');
 
 
 const router = Router();
 
 // get all categories - public
-router.get('/', (req, res) => {
-    res.json({
-        msg: 'get API - controller'
-    });
-});
+router.get('/', [
+    validateJWT,
+    check('name', 'The name is required').not().isEmpty(),
+    errorValidation
+], createCategory);
 
 // get categorY for id - public
 router.get('/:id', (req, res) => {
@@ -20,11 +21,11 @@ router.get('/:id', (req, res) => {
 });
 
 // create categorY - private - any role
-router.post('/', (req, res) => {
-    res.json({
-        msg: 'POST CATEGORY'
-    });
-});
+router.post('/', [
+    validateJWT,
+    check('name', 'The name is required').not().isEmpty(),
+    errorValidation
+], createCategory);
 
 // actualizar category - private - any role
 router.put('/:id', (req, res) => {
