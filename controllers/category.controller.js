@@ -41,7 +41,7 @@ const getAllCategories = async (req, res = response) => {
     const [total, categories] = await Promise.all([
         Category.countDocuments(query),
         Category.find(query)
-            /* .populate('user', 'name') */
+            .populate('user', 'name')
             .skip(Number(fromValidation))
             .limit(Number(limitValidation))
     ]);
@@ -52,7 +52,42 @@ const getAllCategories = async (req, res = response) => {
     });
 };
 
+const getCategory = async (req, res = response) => {
+    const { id } = req.params;
+
+    const category = await Category.findById(id).populate('user', 'name');
+
+    res.json(category);
+};
+
+const updateCategory = async (req, res = response) => {
+    const { id } = req.params;
+    const { state, user, ...data } = req.body;
+    console.log(data);
+
+    data.name = data.name.toUpperCase();
+
+    const category = await Category.findByIdAndUpdate(id, data).populate('user', 'name');
+    res.json({
+        msg: 'Category updated correctly',
+        category
+    });
+};
+const deleteCategory = async (req, res = response) => {
+    const { id } = req.params;
+
+    const category = await Category.findByIdAndUpdate(id, { state: false });
+
+    res.json({
+        msg: 'Category deleted correctly',
+        category
+    });
+};
+
 module.exports = {
     createCategory,
-    getAllCategories
+    getAllCategories,
+    getCategory,
+    updateCategory,
+    deleteCategory
 }
