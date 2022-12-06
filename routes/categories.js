@@ -1,17 +1,13 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { createCategory } = require('../controllers/category.controller');
+const { createCategory, getAllCategories } = require('../controllers/category.controller');
 const { validateJWT, errorValidation } = require('../middlewares');
 
 
 const router = Router();
 
 // get all categories - public
-router.get('/', [
-    validateJWT,
-    check('name', 'The name is required').not().isEmpty(),
-    errorValidation
-], createCategory);
+router.get('/', getAllCategories);
 
 // get categorY for id - public
 router.get('/:id', (req, res) => {
