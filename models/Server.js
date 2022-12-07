@@ -15,6 +15,7 @@ class Server {
         this.USER_PATH = '/api/user';
         this.AUTH_PATH = '/api/auth'
         this.CATEGORIES_PATH = '/api/categories';
+        this.PRODUCT_PATH = '/api/products';
 
         // Middlewares
         this.middlewares();
@@ -43,7 +44,8 @@ class Server {
        this.app.use(this.PRODUCT_PATH, require('../routes/products'));
        this.app.use(this.USER_PATH, require('../routes/user'));
        this.app.use(this.AUTH_PATH, require('../routes/auth'));
-        this.app.use(this.CATEGORIES_PATH, require('../routes/categories'));
+       this.app.use(this.CATEGORIES_PATH, require('../routes/categories'));
+       this.app.use(this.PRODUCT_PATH, require('../routes/products'));
     }
 
     listen() {

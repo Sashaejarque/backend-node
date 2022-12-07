@@ -9,6 +9,13 @@ const isValidRole = async (role = '') => {
     }
 };
 
+const isValidCategory = async (category = '') => {
+    const validCategory = await Category.findOne({name: category})
+    if(!validCategory) {
+        throw new Error(`The category ${category} is not registered in the database`);
+    }
+};
+
 const emailExists = async (email = '') => {
     // Chequeando si existe el email en la DB
     const isEmailExists = await User.findOne({email});
@@ -39,5 +46,6 @@ module.exports = {
     isValidRole,
     emailExists,
     isUserExistsByID,
-    isCategoryExistsByID
+    isCategoryExistsByID,
+    isValidCategory
 };
