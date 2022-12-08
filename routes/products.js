@@ -1,15 +1,34 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { getProducts, deleteProducts, putProducts, createProducts } = require('../controllers/products.controller');
-const { isValidCategory } = require('../helpers/db-validators');
-const { validateJWT, errorValidation } = require('../middlewares');
+const { getProduct, deleteProducts, updateProduct, createProducts, getAllProducts } = require('../controllers/products.controller');
+const { isValidCategory, isProductInDb } = require('../helpers/db-validators');
+const { validateJWT, errorValidation, hasRole } = require('../middlewares');
 
 
 const router = Router();
 
-router.get('/', getProducts);
-router.delete('/:id', deleteProducts);
-router.put('/:id', putProducts);
+router.get('/', getAllProducts);
+
+router.get('/:id', [
+    check('id', 'The id is not valid').isMongoId(),
+    check('id').custom(isProductInDb),
+    errorValidation
+], getProduct);
+
+router.delete('/:id', [
+    validateJWT,
+     hasRole( 'ADMIN_ROLE'),
+    check('id', 'The id is not valid mongo id').isMongoId(),
+    check('id').custom(isProductInDb),
+     errorValidation
+], deleteProducts);
+
+router.put('/:id', [
+    validateJWT,
+    check('id', 'The id is not valid mongo id').isMongoId(),
+    check('id').custom(isProductInDb),
+    errorValidation
+], updateProduct);
 
 router.post('/', [
     validateJWT,

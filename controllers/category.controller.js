@@ -63,7 +63,6 @@ const getCategory = async (req, res = response) => {
 const updateCategory = async (req, res = response) => {
     const { id } = req.params;
     const { state, user, ...data } = req.body;
-    console.log(data);
 
     data.name = data.name.toUpperCase();
 
@@ -83,6 +82,7 @@ const deleteCategory = async (req, res = response) => {
         category
     });
 };
+
 
 module.exports = {
     createCategory,
