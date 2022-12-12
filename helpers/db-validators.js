@@ -49,6 +49,15 @@ const isProductInDb = async (id) => {
         throw new Error(`The id ${id} does not exists in the database`);
     }
 };
+
+const allowedCollections = ( colection = '', colectiones = []) => {
+
+    const included = colectiones.includes( colection );
+    if ( !included ) {
+        throw new Error(`La colección ${ colection } no es permitida, ${ colectiones }`);
+    }
+    return true;
+}
      
 module.exports = {
     isValidRole,
@@ -56,5 +65,6 @@ module.exports = {
     isUserExistsByID,
     isCategoryExistsByID,
     isValidCategory,
-    isProductInDb
+    isProductInDb,
+    allowedCollections
 };

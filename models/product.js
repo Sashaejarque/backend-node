@@ -33,6 +33,9 @@ const productSchema = Schema({
     description: {
         type: String,
     },
+    img: {
+        type: String
+    },
 });
 
 productSchema.methods.toJSON = function() {
